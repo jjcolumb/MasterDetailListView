@@ -1,0 +1,61 @@
+﻿@using MasterDetailListView.Module.BusinessObjects
+@using DevExpress.Blazor
+@using DevExpress.ExpressApp
+@using DevExpress.ExpressApp.Blazor
+@using Microsoft.AspNetCore.Components.Web
+
+@if (Data is not null) 
+{
+    <DxGrid @ref=Grid
+            Data="Data"
+            SelectionMode="GridSelectionMode.Multiple"
+            SelectedDataItemsChanged="OnSelectedDataItemsChanged">
+            <Columns>
+                <DxGridSelectionColumn Width="60px" />
+                <DxGridDataColumn FieldName="CompanyCode">
+                    <CellDisplayTemplate><div style="cursor: pointer;" @onclick="@(e => ClickHandler(context.DataItem))">@(((Company)context.DataItem).CompanyCode)</div></CellDisplayTemplate>
+                </DxGridDataColumn>
+                <DxGridDataColumn FieldName="CompanyName">
+                    <CellDisplayTemplate><div style="cursor: pointer;" @onclick="@(e => ClickHandler(context.DataItem))">@(((Company)context.DataItem).CompanyName)</div></CellDisplayTemplate>
+                </DxGridDataColumn>
+            </Columns>
+            <DetailRowTemplate>
+                <BranchesDetail Company="(Company)context.DataItem" ItemClick="ClickHandler" />
+            </DetailRowTemplate>
+    </DxGrid>
+}
+
+@code {
+    [Parameter]
+    public IEnumerable<Company> Data { get; set; }
+
+    [Parameter]
+    public EventCallback<IReadOnlyList<object>> Selected { get; set; }
+
+    [Parameter]
+    public EventCallback<ICompanyMasterDetail> ItemClick { get; set; }
+
+    DxGrid Grid;
+
+    IReadOnlyList<object> SelectedDataItems { get; set; }
+
+    private async void ClickHandler(object dataItem)
+    {
+        ICompanyMasterDetail item = (ICompanyMasterDetail)dataItem;
+        await ItemClick.InvokeAsync(item);
+    }
+
+    #region Selection
+    async void Select(IReadOnlyList<object> selectedItems)
+    {
+        await Selected.InvokeAsync(selectedItems);
+    }
+
+    void OnSelectedDataItemsChanged(IReadOnlyList<object> newSelection)
+    {
+        SelectedDataItems = newSelection;
+        Select(SelectedDataItems);
+    }
+
+    #endregion
+}

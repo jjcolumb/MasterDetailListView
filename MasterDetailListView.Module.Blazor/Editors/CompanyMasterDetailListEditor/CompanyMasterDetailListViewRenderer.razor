@@ -1,0 +1,11 @@
+﻿<CompanyMasterDetailListView Data=@ComponentModel.Data 
+                             Selected=@ComponentModel.OnSelected
+                             ItemClick=@ComponentModel.OnItemClick />
+
+@code {
+    [Parameter]
+    public CompanyMasterDetailListViewModel ComponentModel { get; set; }
+
+        public static RenderFragment Create(CompanyMasterDetailListViewModel componentModel) =>
+    @<CompanyMasterDetailListViewRenderer ComponentModel=@componentModel />;
+}

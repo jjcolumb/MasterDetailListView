@@ -1,0 +1,37 @@
+﻿@using MasterDetailListView.Module.BusinessObjects
+@using DevExpress.Blazor
+@using DevExpress.ExpressApp
+@using DevExpress.ExpressApp.Blazor
+@using Microsoft.AspNetCore.Components.Web
+
+@if (Branch is not null) 
+{
+    <div class="card">
+        <div class="card-header">
+            <h5>Departments</h5>
+        </div>
+        <DxGrid Data="Branch.Departments.OrderBy(i => i.DepartmentName)">
+            <Columns>
+                <DxGridDataColumn FieldName="DepartmentCode" >
+                    <CellDisplayTemplate><div style="cursor: pointer;" @onclick="@(e => ClickHandler(context.DataItem))">@(((Department)context.DataItem).DepartmentCode)</div></CellDisplayTemplate>
+                </DxGridDataColumn>
+                <DxGridDataColumn FieldName="DepartmentName">
+                    <CellDisplayTemplate><div style="cursor: pointer;" @onclick="@(e => ClickHandler(context.DataItem))">@(((Department)context.DataItem).DepartmentName)</div></CellDisplayTemplate>
+                </DxGridDataColumn>
+            </Columns>
+        </DxGrid>
+    </div>
+}
+
+@code {
+    [Parameter]
+    public Branch Branch { get; set; }
+
+    [Parameter]
+    public EventCallback<object> ItemClick { get; set; }
+
+    private async void ClickHandler(object dataItem)
+    {
+        await ItemClick.InvokeAsync(dataItem);
+    }
+}
